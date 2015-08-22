@@ -22,7 +22,6 @@
  */
 
 var settings = {
-    interactive: false,
     darkTheme: true,
     headRadius: 60,
     thickness: 18,
@@ -238,22 +237,12 @@ var sketch = Sketch.create({
             radius = settings.headRadius * 0.5 + settings.headRadius * 0.5 * pulse;
         }
 
-        if ( settings.interactive ) {
+        t = this.millis;
+        cx = this.width * 0.5;
+        cy = this.height * 0.5;
 
-            ease += ( 0.7 - ease ) * 0.05;
-
-            center.x += ( this.mouse.x - center.x ) * ease;
-            center.y += ( this.mouse.y - center.y ) * ease;
-
-        } else {
-
-            t = this.millis;
-            cx = this.width * 0.5;
-            cy = this.height * 0.5;
-
-            center.x = cx + sin( t * 0.002 ) * cos( t * 0.00005 ) * cx * 0.5;
-            center.y = cy + sin( t * 0.003 ) * tan( sin( t * 0.0003 ) * 1.15 ) * cy * 0.4;
-        }
+        center.x = cx + sin( t * 0.002 ) * cos( t * 0.00005 ) * cx * 0.5;
+        center.y = cy + sin( t * 0.003 ) * tan( sin( t * 0.0003 ) * 1.15 ) * cy * 0.4;
 
         var px, py, theta, tentacle;
         var step = TWO_PI / settings.tentacles;
@@ -298,21 +287,6 @@ var sketch = Sketch.create({
         this.fill();
     },
 
-    mousedown: function() {
-        
-        if ( demo ) {
-
-            demo = false;
-            settings.interactive = true;
-            interactiveGUI.updateDisplay();
-
-            if ( !modified ) {
-                settings.length = 60;
-                settings.gravity = 0.1;
-                settings.wind = 0.0;
-            }
-        }
-    },
 
     save: function() {
         window.open( this.canvas.toDataURL(), 'tentacles', "top=20,left=20,width=" + this.width + ",height=" + this.height );
@@ -346,10 +320,5 @@ gui.add( settings, 'friction' ).min( 0.0 ).max( 1.0 ).onChange( onSettingsChange
 var colourGUI = gui.addColor( settings, 'colour' );
 gui.add( settings, 'darkTheme' ).onChange( onThemeChanged );
 gui.add( settings, 'pulse' );
-
-var interactiveGUI = gui.add( settings, 'interactive' );
-gui.add( sketch, 'autoclear' );
-gui.add( sketch, 'save' );
-gui.close();
 
 onThemeChanged( true );
