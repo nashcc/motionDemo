@@ -1,26 +1,3 @@
-
-/**
- * Copyright (C) 2012 by Justin Windle
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 var settings = {
     darkTheme: true,
     headRadius: 60,
@@ -30,7 +7,6 @@ var settings = {
     gravity: 0.5,
     colour: { h:0, s:0, v:0.8 },
     length: 70,
-    pulse: false,
     wind: -0.5
 };
 
@@ -140,8 +116,8 @@ Tentacle.prototype = {
             node.ox = node.x;
             node.oy = node.y;
 
-            s = sin( da + HALF_PI );
-            c = cos( da + HALF_PI );
+            s = sin( da + Math.PI/2 );
+            c = cos( da + Math.PI/2 );
 
             this.outer[j] = {
                 x: prev.x + c * radius,
@@ -239,7 +215,7 @@ var sketch = Sketch.create({
         center.y = cy + sin( t * 0.003 ) * tan( sin( t * 0.0003 ) * 1.15 ) * cy * 0.4;
 
         var px, py, theta, tentacle;
-        var step = TWO_PI / settings.tentacles;
+        var step = (Math.PI*2) / settings.tentacles;
 
         for ( var i = 0, n = settings.tentacles; i < n; i++ ) {
 
@@ -263,7 +239,7 @@ var sketch = Sketch.create({
         var w = v + ( settings.darkTheme ? -10 : 10 );
 
         this.beginPath();
-        this.arc( center.x, center.y, radius + settings.thickness, 0, TWO_PI );
+        this.arc( center.x, center.y, radius + settings.thickness, 0, Math.PI*2 );
         this.lineWidth = settings.headRadius * 0.3;
         this.globalAlpha = 0.2;
         this.strokeStyle = 'hsl(' + h + ',' + s + '%,' + w + '%)';
@@ -271,18 +247,14 @@ var sketch = Sketch.create({
 
         this.globalAlpha = 1.0;
 
-        for ( var i = 0, n = settings.tentacles; i < n; i++ ) {
+        //for ( var i = 0, n = settings.tentacles; i < n; i++ ) {
+        for ( var i = 0, n = 5; i < n; i++ ) {
             tentacles[i].draw( this );
         }
 
         this.beginPath();
-        this.arc( center.x, center.y, radius + settings.thickness, 0, TWO_PI );
+        this.arc( center.x, center.y, radius + settings.thickness, 0, Math.PI*2);
         this.fillStyle = 'hsl(' + h + ',' + s + '%,' + v + '%)';
         this.fill();
-    },
-
-
-    save: function() {
-        window.open( this.canvas.toDataURL(), 'tentacles', "top=20,left=20,width=" + this.width + ",height=" + this.height );
     }
 });
