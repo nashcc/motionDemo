@@ -28,9 +28,9 @@ var settings = {
     tentacles: 40,
     friction: 0.02,
     gravity: 0.5,
-    colour: { h:0, s:0, v:0.1 },
+    colour: { h:0, s:0, v:0.8 },
     length: 70,
-    pulse: true,
+    pulse: false,
     wind: -0.5
 };
 
@@ -211,7 +211,7 @@ var sketch = Sketch.create({
 
         var tentacle;
 
-        for ( var i = 0; i < 100; i++ ) {
+        for ( var i = 0; i < 50; i++ ) {
 
             tentacle = new Tentacle({
                 length: random( 10, 20 ),
@@ -230,12 +230,6 @@ var sketch = Sketch.create({
         var t, cx, cy, pulse;
 
         t = this.millis * 0.001;
-
-        if ( settings.pulse ) {
-
-            pulse = pow( sin( t * PI ), 18 );
-            radius = settings.headRadius * 0.5 + settings.headRadius * 0.5 * pulse;
-        }
 
         t = this.millis;
         cx = this.width * 0.5;
@@ -292,33 +286,3 @@ var sketch = Sketch.create({
         window.open( this.canvas.toDataURL(), 'tentacles', "top=20,left=20,width=" + this.width + ",height=" + this.height );
     }
 });
-
-function onSettingsChanged() {
-    modified = true;
-}
-
-function onThemeChanged( dark ) {
-    
-    settings.colour.h = 0;
-    settings.colour.s = 0;
-    settings.colour.v = dark ? 0.8 : 0.1;
-
-    document.body.className = dark ? 'dark' : '';
-
-    colourGUI.updateDisplay();
-}
-
-var gui = new dat.GUI();
-gui.add( settings, 'headRadius' ).min( 0.0 ).max( 100.0 ).onChange( onSettingsChanged );
-gui.add( settings, 'tentacles' ).min( 1 ).max( 100 ).onChange( onSettingsChanged );
-gui.add( settings, 'thickness' ).min( 1.0 ).max( 40.0 ).onChange( onSettingsChanged );
-gui.add( settings, 'length' ).min( 10.0 ).max( 100.0 ).onChange( onSettingsChanged );
-gui.add( settings, 'gravity' ).min( -3.0 ).max( 3.0 ).onChange( onSettingsChanged );
-gui.add( settings, 'wind' ).min( -3.0 ).max( 3.0 ).onChange( onSettingsChanged );
-gui.add( settings, 'friction' ).min( 0.0 ).max( 1.0 ).onChange( onSettingsChanged );
-
-var colourGUI = gui.addColor( settings, 'colour' );
-gui.add( settings, 'darkTheme' ).onChange( onThemeChanged );
-gui.add( settings, 'pulse' );
-
-onThemeChanged( true );
