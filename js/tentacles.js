@@ -45,9 +45,6 @@
         length: 70,
         wind: -0.5
     };
-    var radius = settings.headRadius;
-    var tentacles = [];
-    var center = { x:0, y:0 };
 
     var Node = function( x, y ) {
         this.x = this.ox = x || 0.0;
@@ -123,8 +120,8 @@
                 node.vx *= this.friction * (1 - settings.friction);
                 node.vy *= this.friction * (1 - settings.friction);
 
-                node.vx += settings.wind;
-                node.vy += settings.gravity;
+                // node.vx += settings.wind;
+                // node.vy += settings.gravity;
 
                 node.ox = node.x;
                 node.oy = node.y;
@@ -151,55 +148,17 @@
         },
 
         draw: function( ctx ) {
-
-            var h, s, v, e;
-
-            s = this.outer[0];
-            e = this.inner[0];
-
             this.nodes.forEach(function(node) {
                 ctx.beginPath();
                 ctx.arc(node.x, node.y , 2, 0, 2*Math.PI);
                 ctx.stroke();
             });
-
-            this.outer.forEach(function(node) {
-                ctx.beginPath();
-                ctx.arc(node.x, node.y , 2, 0, 2*Math.PI);
-                ctx.stroke();
-            });
-
-            this.inner.forEach(function(node) {
-                ctx.beginPath();
-                ctx.arc(node.x, node.y , 2, 0, 2*Math.PI);
-                ctx.stroke();
-            });
-
-            /*
-            ctx.beginPath();
-            ctx.moveTo( s.x, s.y );
-            utils.curveThroughPoints( this.outer, ctx );
-            utils.curveThroughPoints( this.inner.reverse(), ctx );
-            ctx.lineTo( e.x, e.y );
-            ctx.closePath();
-
-            h = settings.colour.h * this.shade;
-            s = settings.colour.s * 100 * this.shade;
-            v = settings.colour.v * 100 * this.shade;
-
-            ctx.fillStyle = 'hsl(' + h + ',' + s + '%,' + v + '%)';
-            ctx.fill();
-            */
-            if ( settings.thickness > 2 ) {
-
-                v += settings.darkTheme ? -10 : 10;
-
-                ctx.strokeStyle = 'hsl(' + h + ',' + s + '%,' + v + '%)';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            }
         }
     };
+
+    var radius = settings.headRadius;
+    var tentacles = [];
+    var center = { x:0, y:0 };
 
     function setup() {
         var scene = document.getElementById('scene');
@@ -217,13 +176,6 @@
             ];
 
         for ( var i = 0; i < 3; i++ ) {
-            /*tentacleOptions = {
-                length: random( 10, 20 ),
-                radius: random( 0.05, 1.0 ),
-                spacing: random( 0.2, 1.0 ),
-                friction: random( 0.7, 0.88 )
-            };*/
-
             tentacle = new Tentacle(tentacleOptions[i]);
 
             tentacle.move( center.x, center.y, true );
@@ -232,22 +184,16 @@
     }
 
     function updatePositions() {
-        var t, cx, cy, pulse;
+        var cx, cy;
 
-        t = this.millis * 0.001;
+        var scene = document.getElementById('scene');
 
-        t = this.millis;
-        cx = this.width * 0.5;
-        cy = this.height * 0.5;
-
-        // center.x = cx + Math.sin( t * 0.002 ) * Math.cos( t * 0.00005 ) * cx * 0.5;
-        // center.y = cy + Math.sin( t * 0.003 ) * Math.tan( Math.sin( t * 0.0003 ) * 1.15 ) * cy * 0.4;
+        cx = scene.width * 0.5;
+        cy = scene.height * 0.5;
 
         var px, py, theta, tentacle;
-        // var step = (Math.PI*2) / settings.tentacles;
-        var step = (Math.PI*2) / 3;
+        var step = (Math.PI*2) / 1;
 
-        //for ( var i = 0, n = settings.tentacles; i < n; i++ ) {
         for ( var i = 0, n = 1; i < n; i++ ) {
 
             tentacle = tentacles[i];
@@ -263,34 +209,19 @@
     }
 
     function draw() {
+        frameCount++;
         updatePositions();
         var scene = document.getElementById('scene');
         var ctx = scene.getContext('2d');
 
-        var h = settings.colour.h * 0.95;
-        var s = settings.colour.s * 100 * 0.95;
-        var v = settings.colour.v * 100 * 0.95;
-        var w = v + ( settings.darkTheme ? -10 : 10 );
-
         ctx.clearRect(0, 0, scene.width, scene.height);
         ctx.beginPath();
-        // ctx.arc( center.x, center.y, radius + settings.thickness, 0, Math.PI*2 );
-        // ctx.lineWidth = settings.headRadius * 0.3;
-        // ctx.globalAlpha = 0.2;
-        // ctx.strokeStyle = 'hsl(' + h + ',' + s + '%,' + w + '%)';
-        // ctx.stroke();
 
         ctx.globalAlpha = 1.0;
 
-        //for ( var i = 0, n = settings.tentacles; i < n; i++ ) {
         for ( var i = 0, n = 1; i < n; i++ ) {
             tentacles[i].draw( ctx );
         }
-
-        // ctx.beginPath();
-        // ctx.arc( center.x, center.y, radius + settings.thickness, 0, Math.PI*2);
-        // ctx.fillStyle = 'hsl(' + h + ',' + s + '%,' + v + '%)';
-        // ctx.fill();
 
         window.requestAnimationFrame(draw);
     }
@@ -298,7 +229,6 @@
     document.addEventListener('DOMContentLoaded', function(event) {
         setup();
         window.requestAnimationFrame(draw);
-        console.log(frameCount);
     });
 })();
 
