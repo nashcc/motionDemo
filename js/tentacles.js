@@ -15,12 +15,12 @@ var utils = {
     curveThroughPoints: function( points, ctx ) {
 
         var i, n, a, b, x, y;
-        
+
         for ( i = 1, n = points.length - 2; i < n; i++ ) {
 
             a = points[i];
             b = points[i + 1];
-            
+
             x = ( a.x + b.x ) * 0.5;
             y = ( a.y + b.y ) * 0.5;
 
@@ -29,13 +29,13 @@ var utils = {
 
         a = points[i];
         b = points[i + 1];
-        
+
         ctx.quadraticCurveTo( a.x, a.y, b.x, b.y );
     }
 };
 
 var Node = function( x, y ) {
-    
+
     this.x = this.ox = x || 0.0;
     this.y = this.oy = y || 0.0;
 
@@ -64,7 +64,7 @@ var Tentacle = function( options ) {
 Tentacle.prototype = {
 
     move: function( x, y, instant ) {
-        
+
         this.nodes[0].x = x;
         this.nodes[0].y = y;
 
@@ -83,7 +83,7 @@ Tentacle.prototype = {
 
     update: function() {
 
-        var i, n, s, c, dx, dy, da, px, py, node, prev = this.nodes[0];
+        var i, j, s, c, dx, dy, da, px, py, node, prev = this.nodes[0];
         var radius = this.radius * settings.thickness;
         var step = radius / this.length;
 
@@ -144,6 +144,25 @@ Tentacle.prototype = {
         s = this.outer[0];
         e = this.inner[0];
 
+        this.nodes.forEach(function(node) {
+            ctx.beginPath();
+            ctx.arc(node.x, node.y , 2, 0, 2*Math.PI);
+            ctx.stroke();
+        });
+        /*
+        this.outer.forEach(function(node) {
+            ctx.beginPath();
+            ctx.arc(node.x, node.y , 2, 0, 2*Math.PI);
+            ctx.stroke();
+        });
+
+        this.inner.forEach(function(node) {
+            ctx.beginPath();
+            ctx.arc(node.x, node.y , 2, 0, 2*Math.PI);
+            ctx.stroke();
+        });
+        */
+        /*
         ctx.beginPath();
         ctx.moveTo( s.x, s.y );
         utils.curveThroughPoints( this.outer, ctx );
@@ -157,7 +176,7 @@ Tentacle.prototype = {
 
         ctx.fillStyle = 'hsl(' + h + ',' + s + '%,' + v + '%)';
         ctx.fill();
-
+        */
         if ( settings.thickness > 2 ) {
 
             v += settings.darkTheme ? -10 : 10;
@@ -185,16 +204,22 @@ var sketch = Sketch.create({
         center.x = this.width / 2;
         center.y = this.height / 2;
 
-        var tentacle;
+        var tentacle,
+            tentacleOptions = [
+                {length: 20, radius: 1, spacing: 0.5, fiction: 0.88},
+                {length: 15, radius: 0.5, spacing: 0.5, fiction: 0.7},
+                {length: 10, radius: 0.75, spacing: 0.5, fiction: 0.8}
+            ];
 
-        for ( var i = 0; i < 50; i++ ) {
-
-            tentacle = new Tentacle({
+        for ( var i = 0; i < 3; i++ ) {
+            /*tentacleOptions = {
                 length: random( 10, 20 ),
                 radius: random( 0.05, 1.0 ),
                 spacing: random( 0.2, 1.0 ),
                 friction: random( 0.7, 0.88 )
-            });
+            };*/
+
+            tentacle = new Tentacle(tentacleOptions[i]);
 
             tentacle.move( center.x, center.y, true );
             tentacles.push( tentacle );
@@ -211,13 +236,15 @@ var sketch = Sketch.create({
         cx = this.width * 0.5;
         cy = this.height * 0.5;
 
-        center.x = cx + sin( t * 0.002 ) * cos( t * 0.00005 ) * cx * 0.5;
-        center.y = cy + sin( t * 0.003 ) * tan( sin( t * 0.0003 ) * 1.15 ) * cy * 0.4;
+        // center.x = cx + sin( t * 0.002 ) * cos( t * 0.00005 ) * cx * 0.5;
+        // center.y = cy + sin( t * 0.003 ) * tan( sin( t * 0.0003 ) * 1.15 ) * cy * 0.4;
 
         var px, py, theta, tentacle;
-        var step = (Math.PI*2) / settings.tentacles;
+        // var step = (Math.PI*2) / settings.tentacles;
+        var step = (Math.PI*2) / 3;
 
-        for ( var i = 0, n = settings.tentacles; i < n; i++ ) {
+        //for ( var i = 0, n = settings.tentacles; i < n; i++ ) {
+        for ( var i = 0, n = 1; i < n; i++ ) {
 
             tentacle = tentacles[i];
 
@@ -239,22 +266,22 @@ var sketch = Sketch.create({
         var w = v + ( settings.darkTheme ? -10 : 10 );
 
         this.beginPath();
-        this.arc( center.x, center.y, radius + settings.thickness, 0, Math.PI*2 );
-        this.lineWidth = settings.headRadius * 0.3;
-        this.globalAlpha = 0.2;
-        this.strokeStyle = 'hsl(' + h + ',' + s + '%,' + w + '%)';
-        this.stroke();
+        // this.arc( center.x, center.y, radius + settings.thickness, 0, Math.PI*2 );
+        // this.lineWidth = settings.headRadius * 0.3;
+        // this.globalAlpha = 0.2;
+        // this.strokeStyle = 'hsl(' + h + ',' + s + '%,' + w + '%)';
+        // this.stroke();
 
         this.globalAlpha = 1.0;
 
         //for ( var i = 0, n = settings.tentacles; i < n; i++ ) {
-        for ( var i = 0, n = 5; i < n; i++ ) {
+        for ( var i = 0, n = 1; i < n; i++ ) {
             tentacles[i].draw( this );
         }
 
-        this.beginPath();
-        this.arc( center.x, center.y, radius + settings.thickness, 0, Math.PI*2);
-        this.fillStyle = 'hsl(' + h + ',' + s + '%,' + v + '%)';
-        this.fill();
+        // this.beginPath();
+        // this.arc( center.x, center.y, radius + settings.thickness, 0, Math.PI*2);
+        // this.fillStyle = 'hsl(' + h + ',' + s + '%,' + v + '%)';
+        // this.fill();
     }
 });
