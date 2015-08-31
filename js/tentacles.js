@@ -152,8 +152,8 @@
 
         draw: function( ctx ) {
 
-            var s = this.outer[0];
-            var e = this.inner[0];
+            var start = this.outer[0];
+            var end   = this.inner[0];
 
             this.nodes.forEach(function(node) {
                 ctx.beginPath();
@@ -161,13 +161,14 @@
                 ctx.stroke();
             });
 
-            for (var i = 0, dist, cx, cy; i < this.inner.length; i++) {
+            for (var i = 0, dist, radius, cx, cy; i < this.inner.length; i++) {
                 // Math is fun... http://www.mathwarehouse.com/algebra/distance_formula/index.php
                 dist = Math.sqrt(Math.pow(this.inner[i].x - this.outer[i].x, 2) + Math.pow(this.inner[i].y - this.outer[i].y, 2));
+                radius = dist / 2;
                 cx = (this.inner[i].x + this.outer[i].x) / 2;
                 cy = (this.inner[i].y + this.outer[i].y) / 2;
                 ctx.beginPath();
-                ctx.arc(cx, cy, dist, 0, 2 * Math.PI);
+                ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
                 ctx.stroke();
             }
 
@@ -184,12 +185,18 @@
             });
 
             ctx.beginPath();
-            ctx.moveTo( s.x, s.y );
+            ctx.moveTo( start.x, start.y );
             utils.curveThroughPoints( this.outer, ctx );
             utils.curveThroughPoints( this.inner.reverse(), ctx );
-            ctx.lineTo( e.x, e.y );
+            ctx.lineTo( end.x, end.y );
             ctx.closePath();
-            ctx.stroke();
+
+            var h = settings.colour.h * this.shade;
+            var s = settings.colour.s * 100 * this.shade;
+            var v = settings.colour.v * 100 * this.shade;
+
+            ctx.fillStyle = 'hsl(' + h + ',' + s + '%,' + v + '%)';
+            ctx.fill();
         }
     };
 
