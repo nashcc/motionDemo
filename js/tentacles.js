@@ -98,7 +98,7 @@
             var step = radius / this.length;
 
             for ( i = 1, j = 0; i < this.length; i++, j++ ) {
-
+                /* START Code that calculates new node position */
                 node = this.nodes[i];
 
                 node.x += node.vx;
@@ -125,7 +125,9 @@
 
                 node.ox = node.x;
                 node.oy = node.y;
+                /* End node calculation */
 
+                /* Start edge calculation */
                 s = Math.sin( da + Math.PI/2 );
                 c = Math.cos( da + Math.PI/2 );
 
@@ -138,6 +140,7 @@
                     x: prev.x - c * radius,
                     y: prev.y - s * radius
                 };
+                /* End edge calculation */
 
                 this.theta[j] = da;
 
@@ -151,6 +154,27 @@
             this.nodes.forEach(function(node) {
                 ctx.beginPath();
                 ctx.arc(node.x, node.y , 2, 0, 2*Math.PI);
+                ctx.stroke();
+            });
+
+            for (var i = 0, dist, cx, cy; i < this.inner.length; i++) {
+                // Math is fun... http://www.mathwarehouse.com/algebra/distance_formula/index.php
+                dist = Math.sqrt(Math.pow(this.inner[i].x - this.outer[i].x, 2) + Math.pow(this.inner[i].y - this.outer[i].y, 2));
+                cx = (this.inner[i].x + this.outer[i].x) / 2;
+                cy = (this.inner[i].y + this.outer[i].y) / 2;
+                ctx.beginPath();
+                ctx.arc(cx, cy, dist, 0, 2 * Math.PI);
+                ctx.stroke();
+            }
+            this.outer.forEach(function(node) {
+                ctx.beginPath();
+                ctx.arc(node.x, node.y , 2, 0, 2 * Math.PI);
+                ctx.stroke();
+            });
+
+            this.inner.forEach(function(node) {
+                ctx.beginPath();
+                ctx.arc(node.x, node.y , 2, 0, 2 * Math.PI);
                 ctx.stroke();
             });
         }
@@ -210,7 +234,7 @@
 
     function draw() {
         frameCount++;
-        updatePositions();
+        if (frameCount <= 6) { updatePositions(); }
         var scene = document.getElementById('scene');
         var ctx = scene.getContext('2d');
 
