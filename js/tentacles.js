@@ -161,13 +161,14 @@
                 ctx.stroke();
             });
 
-            for (var i = 0, dist, cx, cy; i < this.inner.length; i++) {
+            for (var i = 0, dist, radius, cx, cy; i < this.inner.length; i++) {
                 // Math is fun... http://www.mathwarehouse.com/algebra/distance_formula/index.php
                 dist = Math.sqrt(Math.pow(this.inner[i].x - this.outer[i].x, 2) + Math.pow(this.inner[i].y - this.outer[i].y, 2));
+                radius = dist / 2;
                 cx = (this.inner[i].x + this.outer[i].x) / 2;
                 cy = (this.inner[i].y + this.outer[i].y) / 2;
                 ctx.beginPath();
-                ctx.arc(cx, cy, dist, 0, 2 * Math.PI);
+                ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
                 ctx.stroke();
             }
 
