@@ -151,6 +151,10 @@
         },
 
         draw: function( ctx ) {
+
+            var s = this.outer[0];
+            var e = this.inner[0];
+
             this.nodes.forEach(function(node) {
                 ctx.beginPath();
                 ctx.arc(node.x, node.y , 2, 0, 2*Math.PI);
@@ -166,6 +170,7 @@
                 ctx.arc(cx, cy, dist, 0, 2 * Math.PI);
                 ctx.stroke();
             }
+
             this.outer.forEach(function(node) {
                 ctx.beginPath();
                 ctx.arc(node.x, node.y , 2, 0, 2 * Math.PI);
@@ -177,6 +182,14 @@
                 ctx.arc(node.x, node.y , 2, 0, 2 * Math.PI);
                 ctx.stroke();
             });
+
+            ctx.beginPath();
+            ctx.moveTo( s.x, s.y );
+            utils.curveThroughPoints( this.outer, ctx );
+            utils.curveThroughPoints( this.inner.reverse(), ctx );
+            ctx.lineTo( e.x, e.y );
+            ctx.closePath();
+            ctx.stroke();
         }
     };
 
@@ -234,7 +247,7 @@
 
     function draw() {
         frameCount++;
-        if (frameCount <= 6) { updatePositions(); }
+        updatePositions();
         var scene = document.getElementById('scene');
         var ctx = scene.getContext('2d');
 
